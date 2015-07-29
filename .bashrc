@@ -206,9 +206,11 @@ alias ..='cd ..'
 alias ...='cd ../../'
 alias ....='../../../'
 alias .....='../../../../'
+alias up='cd ..'
 alias ff='git status;git diff > ~/git.diff;/c/Program\ Files\ \(x86\)/Notepad++/notepad++.exe  ~/git.diff &'
 alias cc='git status;git diff --cached > ~/git.diff;/cygdrive/c/Program\ Files\ \(x86\)/Notepad++/notepad++.exe  ~/git.diff &'
 alias dump-cygwin-package='cygcheck -c -d | sed -e "1,2d" -e "s/ .*$//"'
+alias phpunit='php vendor/phpunit/phpunit/phpunit'
 
 # alias for composer, keeping parameters
 composer() {
