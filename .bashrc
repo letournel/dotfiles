@@ -202,14 +202,15 @@ cd
 
 # Aliases
 alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
 alias ll='ls -la --color=auto'
 alias ..='cd ..'
-alias ...='cd ../../'
-alias ....='../../../'
-alias .....='../../../../'
 alias up='cd ..'
-alias ff='git status;git diff > ~/git.diff;/c/Program\ Files\ \(x86\)/Notepad++/notepad++.exe  ~/git.diff &'
-alias cc='git status;git diff --cached > ~/git.diff;/cygdrive/c/Program\ Files\ \(x86\)/Notepad++/notepad++.exe  ~/git.diff &'
+alias up1='cd ..'
+alias up2='cd ../..'
+alias up3='cd ../../..'
+alias up4='cd ../../../..'
 alias dump-cygwin-package='cygcheck -c -d | sed -e "1,2d" -e "s/ .*$//"'
 alias phpunit='php vendor/phpunit/phpunit/phpunit'
 
