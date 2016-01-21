@@ -201,6 +201,7 @@
 cd
 
 # Aliases
+alias grep='grep --color=auto'
 alias ll='ls -la --color=auto'
 alias ..='cd ..'
 alias ...='cd ../../'
@@ -230,6 +231,7 @@ dlcomposer() {
     fi
 }
 
+unset GREP_OPTIONS
 export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -237,9 +239,6 @@ export LC_TYPE=en_US.UTF-8
 export projects_dir=/c/Users/letournel/Documents/Workspace
 export documents_dir=/c/Users/letournel/Documents
 export eclipse_dir=/c/Users/letournel/Logiciels/eclipse
-
-# grep matches colorization
-export GREP_OPTIONS='--color=auto'
 
 # force git to be in english
 #LANG=en

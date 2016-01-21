@@ -1,13 +1,23 @@
 [alias]
-	st = status
-	ci = commit
 	co = checkout
+	cob = checkout -b
+	st = status -sb
+	adp = add -p
+	ci = commit
 	br = branch
+	bra = branch -a
+	brd = branch -d
+	brdm = "!git branch --merged | grep -v '*' | grep -v 'master' | xargs -r -n 1 git branch -d"
+	brD = branch -D
+	rpo = remote prune origin
 	pushbr = push origin 
 	undo = reset --soft HEAD
 	amend = commit --amend
-	hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
-	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+	logc = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	logp = log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'
+	logs = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+	logt = log --stat --since='1 Day Ago' --graph --pretty=oneline --abbrev-commit --date=relative
+	rank = shortlog -sn --no-merges
 [push]
 	default = current
 [color]

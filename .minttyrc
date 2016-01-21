@@ -1,2 +1,5 @@
 BoldAsFont=no
 RightClickAction=paste
+Transparency=medium
+OpaqueWhenFocused=no
+Scrollbar=none
