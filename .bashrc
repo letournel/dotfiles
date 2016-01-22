@@ -224,13 +224,31 @@ composer() {
 }
 
 # download composer
-dlcomposer() {
+composer-dl() {
     if [ -f composer.phar ] ; then
         echo -e "\e[1;33m\e[41mcomposer.phar already exists \e[0m"
     else
         curl -sS https://getcomposer.org/installer | php
     fi
 }
+
+xdebug-enable() {
+    ip="172.17.3.62"
+    export XDEBUG_CONFIG="idekey=Eclipse remote_host=$ip"
+}
+
+xdebug-disable() {
+    unset XDEBUG_CONFIG
+}
+
+search-find() {
+    find . -name "*$1*" | grep -n "$1"
+}
+
+search-grep() {
+    grep -n -r "$1" *
+}
+
 
 unset GREP_OPTIONS
 export LANGUAGE=en_US.UTF-8
