@@ -54,6 +54,11 @@ shopt -s histappend
 # Any completions you add in ~/.bash_completion are sourced last.
 # [[ -f /etc/bash_completion ]] && . /etc/bash_completion
 
+# use git auto complete
+if [ -f ~/.git-completion.bash ]; then
+  . ~/.git-completion.bash
+fi
+
 # -------------------------------------------------------------
 # History Options
 # -------------------------------------------------------------
@@ -174,9 +179,6 @@ export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export LC_TYPE=en_US.UTF-8
-export projects_dir=/c/Users/letournel/Documents/Workspace
-export documents_dir=/c/Users/letournel/Documents
-export eclipse_dir=/c/Users/letournel/Logiciels/eclipse
 
 # -------------------------------------------------------------
 # Custom prompt
