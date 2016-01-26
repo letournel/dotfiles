@@ -1,4 +1,7 @@
+.VirtualBox
 .bash_history
+.bash_local
 .cache
 .composer
 .ssh
+opt

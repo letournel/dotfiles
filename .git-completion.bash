@@ -10,6 +10,7 @@
 #    *) local and remote tag names
 #    *) .git/remotes file names
 #    *) git 'subcommands'
+#    *) git email aliases for git-send-email
 #    *) tree paths within 'ref:path/to/file' expressions
 #    *) file paths within current working directory and index
 #    *) common --long-options
@@ -663,6 +664,7 @@ __git_list_porcelain_commands ()
 		check-mailmap)    : plumbing;;
 		check-ref-format) : plumbing;;
 		checkout-index)   : plumbing;;
+		column)           : internal helper;;
 		commit-tree)      : plumbing;;
 		count-objects)    : infrequent;;
 		credential)       : credentials;;
@@ -744,9 +746,8 @@ __git_compute_porcelain_commands ()
 __git_get_config_variables ()
 {
 	local section="$1" i IFS=$'\n'
-	for i in $(git --git-dir="$(__gitdir)" config --get-regexp "^$section\..*" 2>/dev/null); do
-		i="${i#$section.}"
-		echo "${i/ */}"
+	for i in $(git --git-dir="$(__gitdir)" config --name-only --get-regexp "^$section\..*" 2>/dev/null); do
+		echo "${i#$section.}"
 	done
 }
 
@@ -1311,6 +1312,7 @@ _git_grep ()
 			--full-name --line-number
 			--extended-regexp --basic-regexp --fixed-strings
 			--perl-regexp
+			--threads
 			--files-with-matches --name-only
 			--files-without-match
 			--max-depth
@@ -1667,7 +1669,10 @@ _git_push ()
 _git_rebase ()
 {
 	local dir="$(__gitdir)"
-	if [ -d "$dir"/rebase-apply ] || [ -d "$dir"/rebase-merge ]; then
+	if [ -f "$dir"/rebase-merge/interactive ]; then
+		__gitcomp "--continue --skip --abort --edit-todo"
+		return
+	elif [ -d "$dir"/rebase-apply ] || [ -d "$dir"/rebase-merge ]; then
 		__gitcomp "--continue --skip --abort"
 		return
 	fi
@@ -1709,6 +1714,15 @@ __git_send_email_suppresscc_options="author self cc bodycc sob cccmd body all"
 
 _git_send_email ()
 {
+	case "$prev" in
+	--to|--cc|--bcc|--from)
+		__gitcomp "
+		$(git --git-dir="$(__gitdir)" send-email --dump-aliases 2>/dev/null)
+		"
+		return
+		;;
+	esac
+
 	case "$cur" in
 	--confirm=*)
 		__gitcomp "
@@ -1731,6 +1745,12 @@ _git_send_email ()
 		__gitcomp "
 			deep shallow
 			" "" "${cur##--thread=}"
+		return
+		;;
+	--to=*|--cc=*|--bcc=*|--from=*)
+		__gitcomp "
+		$(git --git-dir="$(__gitdir)" send-email --dump-aliases 2>/dev/null)
+		" "" "${cur#--*=}"
 		return
 		;;
 	--*)
@@ -1774,15 +1794,7 @@ __git_config_get_set_variables ()
 		c=$((--c))
 	done
 
-	git --git-dir="$(__gitdir)" config $config_file --list 2>/dev/null |
-	while read -r line
-	do
-		case "$line" in
-		*.*=*)
-			echo "${line/=*/}"
-			;;
-		esac
-	done
+	git --git-dir="$(__gitdir)" config $config_file --name-only --list 2>/dev/null
 }
 
 _git_config ()
@@ -1887,6 +1899,7 @@ _git_config ()
 			--get --get-all --get-regexp
 			--add --unset --unset-all
 			--remove-section --rename-section
+			--name-only
 			"
 		return
 		;;
@@ -2118,6 +2131,7 @@ _git_config ()
 		http.postBuffer
 		http.proxy
 		http.sslCipherList
+		http.sslVersion
 		http.sslCAInfo
 		http.sslCAPath
 		http.sslCert

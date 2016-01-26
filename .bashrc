@@ -26,69 +26,74 @@
 # If not running interactively, don't do anything
 [[ "$-" != *i* ]] && return
 
+# -------------------------------------------------------------
 # Shell Options
-#
-# See man bash for more options...
-#
+# -------------------------------------------------------------
+
 # Don't wait for job termination notification
 # set -o notify
-#
+
 # Don't use ^D to exit
 # set -o ignoreeof
-#
+
 # Use case-insensitive filename globbing
 # shopt -s nocaseglob
-#
+
 # Make bash append rather than overwrite the history on disk
 shopt -s histappend
-#
+
 # When changing directory small typos can be ignored by bash
 # for example, cd /vr/lgo/apaache would find /var/log/apache
 # shopt -s cdspell
 
+# -------------------------------------------------------------
 # Completion options
-#
+# -------------------------------------------------------------
+
 # Uncomment to turn on programmable completion enhancements.
 # Any completions you add in ~/.bash_completion are sourced last.
 # [[ -f /etc/bash_completion ]] && . /etc/bash_completion
 
+# -------------------------------------------------------------
 # History Options
-#
+# -------------------------------------------------------------
+
 # Don't put duplicate lines in the history.
 # export HISTCONTROL=$HISTCONTROL${HISTCONTROL+,}ignoredups
-#
+
 # Ignore some controlling instructions
 # HISTIGNORE is a colon-delimited list of patterns which should be excluded.
 # The '&' is a special pattern which suppresses duplicate entries.
 # export HISTIGNORE=$'[ \t]*:&:[fb]g:exit'
 # export HISTIGNORE=$'[ \t]*:&:[fb]g:exit:ls' # Ignore the ls command as well
-#
+
 # Whenever displaying the prompt, write the previous line to disk
 # export PROMPT_COMMAND="history -a"
 
+# -------------------------------------------------------------
 # Aliases
-#
+# -------------------------------------------------------------
+
 # Some people use a different file for aliases
 # if [ -f "${HOME}/.bash_aliases" ]; then
 #   source "${HOME}/.bash_aliases"
 # fi
-#
+
 # Some example alias instructions
 # If these are enabled they will be used instead of any instructions
 # they may mask.  For example, alias rm='rm -i' will mask the rm
 # application.  To override the alias instruction use a \ before, ie
 # \rm will call the real rm not the alias.
-#
+
 # Interactive operation...
 # alias rm='rm -i'
 # alias cp='cp -i'
 # alias mv='mv -i'
-#
+
 # Default to human readable figures
 # alias df='df -h'
 # alias du='du -h'
 
-# Aliases
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
@@ -103,22 +108,32 @@ alias up4='cd ../../../..'
 alias dump-cygwin-package='cygcheck -c -d | sed -e "1,2d" -e "s/ .*$//"'
 alias phpunit='php vendor/phpunit/phpunit/phpunit'
 
+# -------------------------------------------------------------
 # Umask
-#
+# -------------------------------------------------------------
+
 # /etc/profile sets 022, removing write perms to group + others.
 # Set a more restrictive umask: i.e. no exec perms for others:
 # umask 027
 # Paranoid: neither group nor others have any perms:
 # umask 077
 
-
+# -------------------------------------------------------------
 # Functions
-#
+# -------------------------------------------------------------
+
 # Some people use a different file for functions
 # if [ -f "${HOME}/.bash_functions" ]; then
 #   source "${HOME}/.bash_functions"
 # fi
-#
+
+docker-setup() {
+    export PATH=~/opt/bin:$PATH
+    alias docker-export='eval "$(docker-machine.exe env default)"'
+    alias docker='console docker'
+    eval "$(docker-machine.exe env default)"
+}
+
 # composer, keeping parameters
 composer() {
     if [ -f composer.phar ]; then
@@ -137,6 +152,10 @@ composer-dl() {
     fi
 }
 
+search-find() {
+    find . -name "*$1*" | grep -n "$1"
+}
+
 xdebug-enable() {
     ip="172.17.3.62"
     export XDEBUG_CONFIG="idekey=Eclipse remote_host=$ip"
@@ -146,12 +165,10 @@ xdebug-disable() {
     unset XDEBUG_CONFIG
 }
 
-search-find() {
-    find . -name "*$1*" | grep -n "$1"
-}
-
-
+# -------------------------------------------------------------
 # Environment
+# -------------------------------------------------------------
+
 unset GREP_OPTIONS
 export LANGUAGE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
@@ -161,20 +178,12 @@ export projects_dir=/c/Users/letournel/Documents/Workspace
 export documents_dir=/c/Users/letournel/Documents
 export eclipse_dir=/c/Users/letournel/Logiciels/eclipse
 
+# -------------------------------------------------------------
+# Custom prompt
+# -------------------------------------------------------------
 
-# Take me home please
-cd
-
-eval "$(docker-machine.exe env default)"
-
-# force git to be in english
-#LANG=en
-#alias git='LANG=en_US.UTF-8 git'
-
-# Git branch in prompt.
 parse_git_branch() {
     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
-
 }
 
 RED="\[\033[0;31m\]"
@@ -184,7 +193,16 @@ NO_COLOR="\[\033[0m\]"
 
 PS1="$GREEN\u@\h$NO_COLOR:\w$YELLOW\$(parse_git_branch)$NO_COLOR\$ "
 
-#launch tmux by default
-if command -v tmux>/dev/null; then
-  [[ ! $TERM =~ screen ]] && [ -z $TMUX ] && exec tmux
+# -------------------------------------------------------------
+# Local only bachrc conf
+# -------------------------------------------------------------
+
+if [ -f "${HOME}/.bashrc_local" ]; then
+    source "${HOME}/.bashrc_local"
 fi
+
+# -------------------------------------------------------------
+# Take me home please
+# -------------------------------------------------------------
+
+cd
