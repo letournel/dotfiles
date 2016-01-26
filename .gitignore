@@ -3,5 +3,12 @@
 .bash_local
 .cache
 .composer
+.subversion
 .ssh
+.viminfo
 opt
+log
+dev*
+divers
+sandbox
+synchro
