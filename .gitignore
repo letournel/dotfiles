@@ -1,6 +1,6 @@
 .VirtualBox
 .bash_history
-.bash_local
+.bashrc_local
 .cache
 .composer
 .subversion
