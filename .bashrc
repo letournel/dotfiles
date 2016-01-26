@@ -204,6 +204,7 @@ cd
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
+alias search-grep='grep --recursive --line-number --text'
 alias ll='ls -la --color=auto'
 alias ..='cd ..'
 alias up='cd ..'
@@ -243,10 +244,6 @@ xdebug-disable() {
 
 search-find() {
     find . -name "*$1*" | grep -n "$1"
-}
-
-search-grep() {
-    grep -n -r "$1" *
 }
 
 
