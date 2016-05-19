@@ -127,6 +127,11 @@ alias up4='cd ../../../..'
 alias dump-cygwin-package='cygcheck -c -d | sed -e "1,2d" -e "s/ .*$//"'
 alias phpunit='php vendor/phpunit/phpunit/phpunit'
 
+alias docker-check-router='docker exec -ti system_router_1 cat /etc/nginx/conf.d/staging.conf | sed '\''/^\s*$/d'\'''
+alias docker-rm-containers-all='docker rm -fv $(docker ps -aq)'
+alias docker-rm-containers-exited='docker rm -fv $(docker ps -aq --filter="status=exited")'
+alias docker-rm-untagged-images='docker rmi $(docker images -q --filter="dangling=true")'
+
 # -------------------------------------------------------------
 # Umask
 # -------------------------------------------------------------
@@ -145,13 +150,6 @@ alias phpunit='php vendor/phpunit/phpunit/phpunit'
 # if [ -f "${HOME}/.bash_functions" ]; then
 #   source "${HOME}/.bash_functions"
 # fi
-
-docker-setup() {
-    export PATH=~/opt/bin:$PATH
-    alias docker-export='eval "$(docker-machine.exe env default)"'
-    alias docker='console docker'
-    eval "$(docker-machine.exe env default)"
-}
 
 # composer, keeping parameters
 composer() {
