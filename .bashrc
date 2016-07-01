@@ -169,6 +169,10 @@ composer-dl() {
     fi
 }
 
+diff-xxd() {
+   diff -y <(xxd "$1") <(xxd "$2") --suppress-common-lines
+}
+
 search-find() {
     find . -name "*$1*" | grep -n "$1"
 }
