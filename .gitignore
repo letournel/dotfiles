@@ -6,6 +6,7 @@
 .subversion
 .ssh
 .viminfo
+.weechat
 opt
 log
 dev*
