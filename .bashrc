@@ -177,6 +177,14 @@ search-find() {
     find . -name "*$1*" | grep -n "$1"
 }
 
+search-grep-file-git-history() {
+    git rev-list --all $2 | (
+        while read revision; do
+            git grep -F $1 $revision $2
+        done
+    )
+}
+
 xdebug-enable() {
     ip="172.17.3.62"
     export XDEBUG_CONFIG="idekey=Eclipse remote_host=$ip"
