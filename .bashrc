@@ -109,8 +109,11 @@ complete -F _ssh ssh
 # alias mv='mv -i'
 
 # Default to human readable figures
-# alias df='df -h'
-# alias du='du -h'
+alias df='df -h'
+alias du='du -h'
+
+# Allow using alias with watch command
+alias watch='watch '
 
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
