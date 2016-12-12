@@ -128,9 +128,11 @@ alias dump-cygwin-package='cygcheck -c -d | sed -e "1,2d" -e "s/ .*$//"'
 alias phpunit='php vendor/phpunit/phpunit/phpunit'
 
 alias docker-check-router='docker exec -ti system_router_1 cat /etc/nginx/conf.d/staging.conf | sed '\''/^\s*$/d'\'''
+alias docker-restart-router='docker exec -ti system_router_1 /etc/init.d/nginx restart'
 alias docker-rm-containers-all='docker rm -fv $(docker ps -aq)'
 alias docker-rm-containers-exited='docker rm -fv $(docker ps -aq --filter="status=exited")'
 alias docker-rm-untagged-images='docker rmi $(docker images -q --filter="dangling=true")'
+alias docker-psa='docker ps -a --format="table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Command}}\t{{.Status}}"'
 
 # -------------------------------------------------------------
 # Umask
