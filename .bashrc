@@ -47,14 +47,6 @@ shopt -s histappend
 # shopt -s cdspell
 
 # -------------------------------------------------------------
-# Completion options
-# -------------------------------------------------------------
-
-# Uncomment to turn on programmable completion enhancements.
-# Any completions you add in ~/.bash_completion are sourced last.
-# [[ -f /etc/bash_completion ]] && . /etc/bash_completion
-
-# -------------------------------------------------------------
 # History Options
 # -------------------------------------------------------------
 
@@ -79,6 +71,14 @@ shopt -s histappend
 # umask 027
 # Paranoid: neither group nor others have any perms:
 # umask 077
+
+# -------------------------------------------------------------
+# Completion
+# -------------------------------------------------------------
+
+if [ -f "${HOME}/.bash_completion" ]; then
+   source "${HOME}/.bash_completion"
+fi
 
 # -------------------------------------------------------------
 # Aliases
