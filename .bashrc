@@ -54,24 +54,6 @@ shopt -s histappend
 # Any completions you add in ~/.bash_completion are sourced last.
 # [[ -f /etc/bash_completion ]] && . /etc/bash_completion
 
-# use git auto complete
-if [ -f ~/.git-completion.bash ]; then
-  . ~/.git-completion.bash
-fi
-
-_ssh()
-{
-    local cur prev opts
-    COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts=$(grep '^Host' ~/.ssh/config | grep -v '[?*]' | cut -d ' ' -f 2-)
-
-    COMPREPLY=( $(compgen -W "$opts" -- ${cur}) )
-    return 0
-}
-complete -F _ssh ssh
-
 # -------------------------------------------------------------
 # History Options
 # -------------------------------------------------------------
@@ -89,54 +71,6 @@ complete -F _ssh ssh
 # export PROMPT_COMMAND="history -a"
 
 # -------------------------------------------------------------
-# Aliases
-# -------------------------------------------------------------
-
-# Some people use a different file for aliases
-# if [ -f "${HOME}/.bash_aliases" ]; then
-#   source "${HOME}/.bash_aliases"
-# fi
-
-# Some example alias instructions
-# If these are enabled they will be used instead of any instructions
-# they may mask.  For example, alias rm='rm -i' will mask the rm
-# application.  To override the alias instruction use a \ before, ie
-# \rm will call the real rm not the alias.
-
-# Interactive operation...
-# alias rm='rm -i'
-# alias cp='cp -i'
-# alias mv='mv -i'
-
-# Default to human readable figures
-alias df='df -h'
-alias du='du -h'
-
-# Allow using alias with watch command
-alias watch='watch '
-
-alias grep='grep --color=auto'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias search-grep='grep --recursive --line-number --text'
-alias d='ls -la --color=auto'
-alias ll='ls -la --color=auto'
-alias ..='cd ..'
-alias up='cd ..'
-alias up1='cd ..'
-alias up2='cd ../..'
-alias up3='cd ../../..'
-alias up4='cd ../../../..'
-alias dump-cygwin-package='cygcheck -c -d | sed -e "1,2d" -e "s/ .*$//"'
-alias phpunit='php vendor/phpunit/phpunit/phpunit'
-
-alias docker-check-router='docker exec -ti system_router_1 cat /etc/nginx/conf.d/staging.conf | sed '\''/^\s*$/d'\'''
-alias docker-restart-router='docker exec -ti system_router_1 /etc/init.d/nginx restart'
-alias docker-rm-containers-all='docker rm -fv $(docker ps -aq)'
-alias docker-rm-containers-exited='docker rm -fv $(docker ps -aq --filter="status=exited")'
-alias docker-rm-untagged-images='docker rmi $(docker images -q --filter="dangling=true")'
-
-# -------------------------------------------------------------
 # Umask
 # -------------------------------------------------------------
 
@@ -147,74 +81,29 @@ alias docker-rm-untagged-images='docker rmi $(docker images -q --filter="danglin
 # umask 077
 
 # -------------------------------------------------------------
+# Aliases
+# -------------------------------------------------------------
+
+if [ -f "${HOME}/.bash_aliases" ]; then
+   source "${HOME}/.bash_aliases"
+fi
+
+# -------------------------------------------------------------
 # Functions
 # -------------------------------------------------------------
 
 # Some people use a different file for functions
-# if [ -f "${HOME}/.bash_functions" ]; then
-#   source "${HOME}/.bash_functions"
-# fi
+if [ -f "${HOME}/.bash_functions" ]; then
+   source "${HOME}/.bash_functions"
+fi
 
-# composer, keeping parameters
-composer() {
-    if [ -f composer.phar ]; then
-        php composer.phar "$@"
-    else
-        echo -e "\e[1;33m\e[41m404 : composer.phar not found\e[0m"
-    fi
-}
+# -------------------------------------------------------------
+# Local only bachrc conf
+# -------------------------------------------------------------
 
-# download composer
-composer-dl() {
-    if [ -f composer.phar ] ; then
-        echo -e "\e[1;33m\e[41mcomposer.phar already exists \e[0m"
-    else
-        curl -sS https://getcomposer.org/installer | php
-    fi
-}
-
-diff-xxd() {
-   diff -y <(xxd "$1") <(xxd "$2") --suppress-common-lines
-}
-
-search-find() {
-    find . -name "*$1*" | grep -n "$1"
-}
-
-search-grep-file-git-history() {
-    git rev-list --all $2 | (
-        while read revision; do
-            git grep -F $1 $revision $2
-        done
-    )
-}
-
-xdebug-enable() {
-    ip="172.17.3.62"
-    export XDEBUG_CONFIG="idekey=Eclipse remote_host=$ip"
-}
-
-xdebug-disable() {
-    unset XDEBUG_CONFIG
-}
-
-# Docker helpers
-
-docker-psa() {
-    docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.CreatedAt}}\t{{.Status}}" "$@"
-}
-
-docker-shell() {
-    local CONTAINER_NAME="$1"
-    local COMMAND="bash"
-
-    if [ "$#" -gt 1 ]; then
-        COMMAND=$(echo "$@" | cut -d' ' -f2-)
-    fi
-
-    docker exec -ti "${CONTAINER_NAME}" ${COMMAND}
-}
-
+if [ -f "${HOME}/.bashrc_local" ]; then
+    source "${HOME}/.bashrc_local"
+fi
 
 # -------------------------------------------------------------
 # Environment
@@ -240,14 +129,6 @@ GREEN="\[\033[0;32m\]"
 NO_COLOR="\[\033[0m\]"
 
 PS1="$GREEN\u@\h$NO_COLOR:\w$YELLOW\$(parse_git_branch)$NO_COLOR\$ "
-
-# -------------------------------------------------------------
-# Local only bachrc conf
-# -------------------------------------------------------------
-
-if [ -f "${HOME}/.bashrc_local" ]; then
-    source "${HOME}/.bashrc_local"
-fi
 
 # -------------------------------------------------------------
 # Take me home please
