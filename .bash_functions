@@ -6,12 +6,20 @@ composer() {
     fi
 }
 
-composer-dl() {
+composer-install() {
     if [ -f composer.phar ] ; then
-        echo -e "\e[1;33m\e[41mcomposer.phar already exists \e[0m"
+        php composer.phar install --prefer-dist --ignore-platform-reqs
     else
-        curl -sS https://getcomposer.org/installer | php
+        echo -e "\e[1;33m\e[41m404 : composer.phar not found\e[0m"
     fi
+}
+
+composer-dl()
+   if [ -f composer.phar ] ; then
+       echo -e "\e[1;33m\e[41mcomposer.phar already exists \e[0m"
+   else
+       curl -sS https://getcomposer.org/installer | php
+   fi
 }
 
 diff-xxd() {
