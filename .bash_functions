@@ -14,7 +14,7 @@ composer-install() {
     fi
 }
 
-composer-dl()
+composer-dl() {
    if [ -f composer.phar ] ; then
        echo -e "\e[1;33m\e[41mcomposer.phar already exists \e[0m"
    else
