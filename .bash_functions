@@ -61,3 +61,7 @@ docker-shell() {
 
     docker exec -ti "${CONTAINER_NAME}" ${COMMAND}
 }
+
+docker-pull-registry-tag() {
+    docker images --format {{.Repository}}:{{.Tag}} | grep $1 | sed 's/$1/$2/' | xargs -n 1 docker pull
+}

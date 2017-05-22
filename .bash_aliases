@@ -36,5 +36,5 @@ alias docker-restart-router='docker exec -ti system_router_1 /etc/init.d/nginx r
 alias docker-rm-containers-all='docker rm -fv $(docker ps -aq)'
 alias docker-rm-containers-exited='docker rm -fv $(docker ps -aq --filter="status=exited")'
 alias docker-rm-untagged-images='docker rmi $(docker images -q --filter="dangling=true")'
-alias docker-pull-registry='for IMAGE in $(docker images --format {{.Repository}}:{{.Tag}} | grep docker-registry); do docker pull $IMAGE; done'
-alias docker-push-registry='for IMAGE in $(docker images --format {{.Repository}}:{{.Tag}} | grep docker-registry); do docker push $IMAGE; done'
+alias docker-pull-registry-all='docker images --format {{.Repository}}:{{.Tag}} | grep docker-registry | xargs -n 1 docker pull'
+alias docker-push-registry-all='docker images --format {{.Repository}}:{{.Tag}} | grep docker-registry | xargs -n 1 docker push'
