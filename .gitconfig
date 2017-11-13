@@ -14,7 +14,7 @@
 	brD = branch -D
 	rpo = remote prune origin
 	pushbr = push origin 
-	undo = reset --soft HEAD
+	undo = reset --soft HEAD^
 	amend = commit --amend
 	logc = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 	logp = log --graph --pretty='format:%C(red)%d%C(reset) %C(yellow)%h%C(reset) %ar %C(green)%aN%C(reset) %s'

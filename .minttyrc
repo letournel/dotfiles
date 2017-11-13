@@ -3,3 +3,4 @@ RightClickAction=paste
 Transparency=medium
 OpaqueWhenFocused=no
 Scrollbar=none
+FontHeight=9
