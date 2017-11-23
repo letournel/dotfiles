@@ -12,7 +12,12 @@ for file in $files; do
     ln -sf $dotfilesDirectory/$file ~/$file
 done
 
-#cd vim
-#./setup.sh
+if [ -d "`eval echo '~/.vim'`" ]; then
+    echo -e $YELLOW"Pulling vim colorschemes"$RESTORE
+    git -C ~/.vim pull
+else
+    echo -e $YELLOW"Cloning vim colorschemes"$RESTORE
+    git clone https://github.com/flazz/vim-colorschemes.git ~/.vim
+fi
 
 echo -e "\nNow you have to run 'source ~/.bashrc'"
