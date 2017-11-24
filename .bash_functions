@@ -48,7 +48,7 @@ xdebug-disable() {
 }
 
 docker-psa() {
-    docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.CreatedAt}}\t{{.Status}}" "$@"
+    docker ps -a --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.CreatedAt}}\t{{.Status}}" "$@"
 }
 
 docker-shell() {
