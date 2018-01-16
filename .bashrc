@@ -135,3 +135,7 @@ PS1="$GREEN\u@\h$NO_COLOR:\w$YELLOW\$(parse_git_branch)$NO_COLOR\$ "
 # -------------------------------------------------------------
 
 cd
+
+if [[ ! $TERM =~ screen ]]; then
+    exec tmux
+fi
