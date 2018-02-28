@@ -133,11 +133,7 @@ aws-ecs-ssh-cmd() {
 }
 
 aws-profile-get() {
-    if [ "$#" -gt 0 ]; then
-        export AWS_PROFILE="$1"
-    else
-        unset AWS_PROFILE
-    fi
+    echo "$AWS_PROFILE"
 }
 
 aws-profile-set() {
