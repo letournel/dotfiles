@@ -66,71 +66,92 @@ docker-pull-registry-tag() {
     docker images --format {{.Repository}}:{{.Tag}} | grep $1 | sed 's/$1/$2/' | xargs -n 1 docker pull
 }
 
-aws-get-profile() {
-    if [ "$#" -gt 0 ]; then
-        export AWS_PROFILE="$1"
-    else
-        unset AWS_PROFILE
+aws-cloudformation-logs-cli() {
+    if [ "$#" -lt 2 ]; then
+        aws-cloudformation-logs-groups $@
+    elif [ "$#" -eq 2 ]; then
+        aws-cloudformation-logs-groups $@ | xargs -I '{}'\
+        echo "awslogs get {} -GS -s 10m"
     fi
 }
 
-aws-set-profile() {
-    if [ "$#" -gt 0 ]; then
-        export AWS_PROFILE="$1"
-    else
-        unset AWS_PROFILE
+aws-cloudformation-logs-cloudwatch() {
+    if [ "$#" -lt 2 ]; then
+        aws-cloudformation-logs-groups $@
+    elif [ "$#" -eq 2 ]; then
+        aws-cloudformation-logs-groups $@ | xargs -I '{}'\
+        echo "https://console.aws.amazon.com/cloudwatch/home#logEventViewer:group={}"
     fi
 }
 
-aws-logcmd-cloudformation() {
+aws-cloudformation-logs-groups() {
     if [ "$#" -eq 0 ]; then
         echo "Choose your aws profile and add it as parameter:"
         grep "^\[profile" ~/.aws/config | sed "s/\[profile\s*\(.*\)\]/\1/" | sort | xargs
     elif [ "$#" -eq 1 ]; then
         echo "Choose your stack arn and add it as parameter:"
-        aws-set-profile "$1"
+        aws-profile-set "$1"
         aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE ROLLBACK_COMPLETE UPDATE_COMPLETE UPDATE_ROLLBACK_COMPLETE | grep -o "arn:\S*" | sort | uniq
     elif [ "$#" -eq 2 ]; then
-        aws-set-profile "$1"
-        aws cloudformation describe-stack-resources --stack-name "$2" | grep "AWS::Logs::LogGroup" | cut -f3 | xargs -I '{}'\
-        echo "awslogs get -GS -s 10m {}"
+        aws-profile-set "$1"
+        (
+          aws cloudformation describe-stack-resources --stack-name "$2" | grep "AWS::Logs::LogGroup" | cut -f3 &&
+          aws cloudformation describe-stacks --stack-name "$2" | grep "^OUTPUTS" | grep "LogGroupAccess" | grep -o "logEventViewer:group=\S*" | sed "s/logEventViewer:group=//"
+        ) | sort | uniq
     fi
 }
 
-aws-sshcmd-cloudformation() {
+aws-cloudformation-ssh-cmd() {
     if [ "$#" -eq 0 ]; then
         echo "Choose your aws profile and add it as parameter:"
         grep "^\[profile" ~/.aws/config | sed "s/\[profile\s*\(.*\)\]/\1/" | sort | xargs
     elif [ "$#" -eq 1 ]; then
         echo "Choose your stack arn and add it as parameter:"
-        aws-set-profile "$1"
+        aws-profile-set "$1"
         aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE ROLLBACK_COMPLETE UPDATE_COMPLETE UPDATE_ROLLBACK_COMPLETE | grep -o "arn:\S*" | sort | uniq
     elif [ "$#" -eq 2 ]; then
-        aws-set-profile "$1"
+        aws-profile-set "$1"
         aws cloudformation describe-stack-resources --stack-name "$2" | grep "AWS::EC2::Instance" | cut -f3 | xargs -r\
         aws ec2 describe-instances --instance-ids | grep "^PRIVATEIPADDRESSES\b" | cut -f3 | xargs -I '{}'\
         echo "ssh -t bastion-$1 ssh {}"
     fi
 }
 
-aws-sshcmd-ecs() {
+aws-ecs-ssh-cmd() {
     if [ "$#" -eq 0 ]; then
         echo "Choose your aws profile and add it as parameter:"
         grep "^\[profile" ~/.aws/config | sed "s/\[profile\s*\(.*\)\]/\1/" | sort | xargs
     elif [ "$#" -eq 1 ]; then
         echo "Choose your cluster arn and add it as parameter:"
-        aws-set-profile "$1"
+        aws-profile-set "$1"
         aws ecs list-clusters | grep -o "arn:\S*" | sort | uniq
     elif [ "$#" -eq 2 ]; then
         echo "Choose your service arn and add it as parameter:"
-        aws-set-profile "$1"
+        aws-profile-set "$1"
         aws ecs list-services --cluster "$2" | grep -o "arn:\S*" | sort | uniq
     elif [ "$#" -eq 3 ]; then
-        aws-set-profile "$1"
-        aws ecs describe-services --cluster "$2" --services "$3" | grep "^LOADBALANCERS\b" | grep -o "arn:\S*" | head -n1 | xargs -I '{}'\
-        aws elbv2 describe-target-health --target-group-arn "{}" | grep "^TARGET\b" | cut -f2 | xargs -r\
+        aws-profile-set "$1"
+        aws ecs list-tasks --cluster "$2" --service-name "$3" | grep "^TASKARNS\b" | grep -o "arn:\S*" | xargs -r\
+        aws ecs describe-tasks --cluster "$2" --tasks | grep "^TASKS\b" | cut -f5 | xargs -r\
+        aws ecs describe-container-instances --cluster "$2" --container-instances | grep "^CONTAINERINSTANCES\b" | cut -f4 | xargs -r\
         aws ec2 describe-instances --instance-ids | grep "^PRIVATEIPADDRESSES\b" | cut -f3 | xargs -I '{}'\
         echo "ssh -t bastion-$1 ssh {}"
+    fi
+}
+
+aws-profile-get() {
+    if [ "$#" -gt 0 ]; then
+        export AWS_PROFILE="$1"
+    else
+        unset AWS_PROFILE
+    fi
+}
+
+aws-profile-set() {
+    if [ "$#" -gt 0 ]; then
+        export AWS_PROFILE="$1"
+    else
+        unset AWS_PROFILE
     fi
 }
 
