@@ -125,7 +125,7 @@ aws-ecs-ssh-cmd() {
         aws ecs list-services --profile "$1" --cluster "$2" | grep -o "arn:\S*" | sort | uniq
     elif [ "$#" -eq 3 ]; then
         aws ecs list-tasks --profile "$1" --cluster "$2" --service-name "$3" | grep "^TASKARNS\b" | grep -o "arn:\S*" | xargs -r\
-        aws ecs describe-tasks --profile "$1" --cluster "$2" --tasks | grep "^TASKS\b" | cut -f5 | xargs -r\
+        aws ecs describe-tasks --profile "$1" --cluster "$2" --tasks | grep "^TASKS\b" | cut -f3 | xargs -r\
         aws ecs describe-container-instances --profile "$1" --cluster "$2" --container-instances | grep "^CONTAINERINSTANCES\b" | cut -f4 | xargs -r\
         aws ec2 describe-instances --profile "$1" --instance-ids | grep "^PRIVATEIPADDRESSES\b" | cut -f3 | xargs -I '{}'\
         echo "ssh -t bastion-$1 ssh {}"
