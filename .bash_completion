@@ -1,8 +1,9 @@
-# use git auto complete
+# --- git autocomplete ---
 if [ -f ~/.git-completion.bash ]; then
   . ~/.git-completion.bash
 fi
 
+# --- ssh autocomplete ---
 _ssh()
 {
     local cur prev opts
@@ -16,9 +17,12 @@ _ssh()
 }
 complete -F _ssh ssh
 
+# --- docker autocomplete ---
 _docker-shell() {
     local cur="${COMP_WORDS[COMP_CWORD]}"
     __docker_complete_containers_running
 }
-
 complete -F _docker-shell docker-shell
+
+# --- kubectl autocomplete ---
+source <(kubectl completion bash)

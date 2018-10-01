@@ -39,3 +39,6 @@ alias docker-rmi-all='docker images -q | xargs -r -n 1 docker rmi -f'
 alias docker-rmi-untagged='docker images -q -f dangling=true | xargs -r -n 1 docker rmi'
 alias docker-pull-registry-all='docker images --format {{.Repository}}:{{.Tag}} | grep docker-registry | xargs -n 1 docker pull'
 alias docker-push-registry-all='docker images --format {{.Repository}}:{{.Tag}} | grep docker-registry | xargs -n 1 docker push'
+
+alias kube-log='kubectl logs -f '
+alias kube-ps='kubectl get pods'

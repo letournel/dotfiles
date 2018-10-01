@@ -125,7 +125,7 @@ aws-ecs-ssh-cmd() {
         aws ecs list-services --profile "$1" --cluster "$2" | grep -o "arn:\S*" | sort | uniq
     elif [ "$#" -eq 3 ]; then
         aws ecs list-tasks --profile "$1" --cluster "$2" --service-name "$3" | grep "^TASKARNS\b" | grep -o "arn:\S*" | xargs -r\
-        aws ecs describe-tasks --profile "$1" --cluster "$2" --tasks | grep "^TASKS\b" | cut -f3 | xargs -r\
+        aws ecs describe-tasks --profile "$1" --cluster "$2" --tasks | grep "^TASKS\b" | cut -f5 | xargs -r\
         aws ecs describe-container-instances --profile "$1" --cluster "$2" --container-instances | grep "^CONTAINERINSTANCES\b" | cut -f4 | xargs -r\
         aws ec2 describe-instances --profile "$1" --instance-ids | grep "^PRIVATEIPADDRESSES\b" | cut -f3 | xargs -I '{}'\
         echo "ssh -t bastion-$1 ssh {}"
@@ -141,6 +141,18 @@ aws-profile-set() {
         export AWS_PROFILE="$1"
     else
         unset AWS_PROFILE
+    fi
+}
+
+aws-region-get() {
+    echo "$AWS_REGION"
+}
+
+aws-region-set() {
+    if [ "$#" -gt 0 ]; then
+        export AWS_REGION="$1"
+    else
+        unset AWS_REGION
     fi
 }
 
@@ -170,6 +182,20 @@ tmux-vertical() {
     tmux-spliter "even-vertical" $@
 }
 
+scp-through() {
+    if [ "$#" -ne 3 ]; then
+        echo "Incorrect number of arguments: scp-through <bastion> <host> <absolutefilepath>"
+    elif [[ ! "${@:(-1):1}" = "/"* ]]; then
+        echo "No absolute file path in last argument: scp-through <bastion> <host> <absolutefilepath>"
+    else
+        bastion="${@:1:1}"
+        host="${@:2:1}"
+        absolutefilepath="${@:3:1}"
+        filename=$(basename $absolutefilepath)
+        echo "scp -ro ProxyCommand=\"ssh $bastion nc $host 22\" $host:$absolutefilepath $host-$filename"
+    fi
+}
+
 ssh-hops-tunneling() {
     if [ "$#" -lt 2 ]; then
         echo "Not enough argument: ssh-hops-tunneling [hops] <lasthop> <target:port>"
@@ -185,4 +211,49 @@ ssh-hops-tunneling() {
         cmd+="ssh -L${port}:${@:(-1):1} -t ${@:(-2):1}"
         echo $cmd
     fi
+}
+
+git-subdir-branches()
+{
+    if [[ -z "$1" ]]; then
+        echo "Usage: $FUNCNAME <dir>" >&2
+        return 1
+    fi
+
+    if [[ ! -d "$1" ]]; then
+        echo "Invalid dir specified: '${1}'"
+        return 1
+    fi
+
+    # Subshell so we don't end up in a different dir than where we started.
+    (
+        cd "$1"
+        for sub in *; do
+            [[ -d "${sub}/.git" ]] || continue
+            echo "$sub [$(cd "$sub"; git branch | grep '^\*' | cut -d' ' -f2)]"
+        done
+    )
+}
+
+git-subdir-allbranches()
+{
+    if [[ -z "$1" ]]; then
+        echo "Usage: $FUNCNAME <dir>" >&2
+        return 1
+    fi
+
+    if [[ ! -d "$1" ]]; then
+        echo "Invalid dir specified: '${1}'"
+        return 1
+    fi
+
+    # Subshell so we don't end up in a different dir than where we started.
+    (
+        cd "$1"
+        for sub in *; do
+            [[ -d "${sub}/.git" ]] || continue
+            echo "$sub"
+            echo "$(cd "$sub"; git branch)"
+        done
+    )
 }
