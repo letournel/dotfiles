@@ -156,6 +156,25 @@ aws-region-set() {
     fi
 }
 
+aws-s3-prune-file-older-than() {
+    if [ ! "$#" -eq 2 ]; then
+        echo "Usage:"
+        echo "  aws-s3-prune-file-older-than \"s3://bucket/path/\" \"-7 days\""
+        echo "  aws-s3-prune-file-older-than \"s3://bucket/path/\" \"2019-02-28 00:00:00\""
+    else
+        bucketpath="$1"
+        olderThan=`date -d"$2" +%s`
+        aws s3 ls $bucketpath | while read -r line; do
+            createDate=`echo $line|awk {'print $1" "$2'}`
+            createDate=`date -d"$createDate" +%s`
+            if [ $createDate -lt $olderThan ]; then
+                fileName=`echo $line|awk {'print $4'}`
+                test -n $fileName && aws s3 rm "$bucketpath$fileName"
+            fi
+        done
+    fi
+}
+
 tmux-spliter() {
     if [ "$#" -eq 0 ]; then
         echo "No tmux layout in arguments"
